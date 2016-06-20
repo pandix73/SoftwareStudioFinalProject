@@ -10,7 +10,7 @@
         android:id="@+id/btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="館內狀況"
+        android:text="詳細狀況"
         android:textSize="30dp"
         android:background="@drawable/shape"
         android:layout_alignParentTop="true"

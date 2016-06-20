@@ -13,11 +13,12 @@
         android:id="@+id/btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="進入"
+        android:text="書籍查詢"
         android:textSize="30dp"
         android:background="@drawable/shape"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
+        android:layout_marginTop="30dp"
         android:layout_gravity="center_horizontal|top" />
 
 </FrameLayout>

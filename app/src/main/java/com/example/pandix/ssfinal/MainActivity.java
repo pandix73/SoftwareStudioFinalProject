@@ -61,8 +61,33 @@ public class MainActivity extends Activity {
                 startActivity(intent);
             }
         });
-        
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                Button button = (Button)findViewById(R.id.btn);
+                if(position == 0){
+                    button.setText("書籍查詢");
+                } else if (position == 1) {
+                    button.setText("管理聊天");
+                } else if (position == 2) {
+                    button.setText("館內狀況");
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
     }
+
 
 
 }
