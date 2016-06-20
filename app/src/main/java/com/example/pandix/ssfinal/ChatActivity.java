@@ -3,57 +3,115 @@ package com.example.pandix.ssfinal;
 /**
  * Created by pandix on 2016/6/20.
  */
-import android.content.DialogInterface;
-import android.graphics.PorterDuff;
-import android.os.Bundle;
-
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.EditText;
+import android.widget.TextView;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+
 public class ChatActivity extends Activity {
-
-    private ImageView bg;
-    private ImageView seat;
-    private Button detail;
-
+    public static Handler mHandler = new Handler();
+    TextView TextView01;    // 用來顯示文字訊息
+    EditText EditText01;    // 文字方塊
+    EditText EditText02;    // 文字方塊
+    String tmp;                // 暫存文字訊息
+    Socket clientSocket;    // 客戶端socket
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        bg = (ImageView)findViewById(R.id.img1);
-        seat = (ImageView)findViewById(R.id.img2);
-        detail = (Button)findViewById(R.id.btn);
-        detail.setOnClickListener(btnOnclick);
-        detail.getBackground().setColorFilter(0xffff0000, PorterDuff.Mode.MULTIPLY);
+        setContentView(R.layout.activity_chat);
+
+        // 從資源檔裡取得位址後強制轉型成文字方塊
+        TextView01 = (TextView) findViewById(R.id.TextView01);
+        EditText01=(EditText) findViewById(R.id.EditText01);
+        EditText02=(EditText) findViewById(R.id.EditText02);
+
+        // 以新的執行緒來讀取資料
+        Thread t = new Thread(readData);
+
+        // 啟動執行緒
+        t.start();
+
+        // 從資源檔裡取得位址後強制轉型成按鈕
+        Button button1=(Button) findViewById(R.id.Button01);
+
+        // 設定按鈕的事件
+        button1.setOnClickListener(new Button.OnClickListener() {
+            // 當按下按鈕的時候觸發以下的方法
+            public void onClick(View v) {
+                // 如果已連接則
+                if(clientSocket.isConnected()){
+
+                    BufferedWriter bw;
+
+                    try {
+                        // 取得網路輸出串流
+                        bw = new BufferedWriter( new OutputStreamWriter(clientSocket.getOutputStream()));
+
+                        // 寫入訊息
+                        bw.write(EditText01.getText()+":"+EditText02.getText()+"\n");
+
+                        // 立即發送
+                        bw.flush();
+                    } catch (IOException e) {
+
+                    }
+                    // 將文字方塊清空
+                    EditText02.setText("");
+                }
+            }
+        });
+
     }
 
-    private Button.OnClickListener btnOnclick = new Button.OnClickListener() {
-        public void onClick(View v){
-            openDialog();
+    // 顯示更新訊息
+    private Runnable updateText = new Runnable() {
+        public void run() {
+            // 加入新訊息並換行
+            TextView01.append(tmp + "\n");
         }
     };
 
-    private void openDialog() {
-        String output = "";
-        output += "溫度" + 23 + '\n';
-        output += "濕度" + 15 + '\n';
-        output += "剩餘座位" + 5 + '\n';
+    // 取得網路資料
+    private Runnable readData = new Runnable() {
+        public void run() {
+            // server端的IP
+            InetAddress serverIp;
 
-        new AlertDialog.Builder(this)
-                .setTitle("詳細資料")
-                .setMessage(output)
-                .setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
+            try {
+                // 以內定(本機電腦端)IP為Server端
+                serverIp = InetAddress.getByName("10.0.2.2");
+                int serverPort = 5050;
+                clientSocket = new Socket(serverIp, serverPort);
 
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // TODO Auto-generated method stub
-                                //按下按鈕後執行的動作，沒寫則退出Dialog
-                            }
-                        }
-                )
-                .show();
-    }
+                // 取得網路輸入串流
+                BufferedReader br = new BufferedReader(new InputStreamReader(
+                        clientSocket.getInputStream()));
+
+                // 當連線後
+                while (clientSocket.isConnected()) {
+                    // 取得網路訊息
+                    tmp = br.readLine();
+
+                    // 如果不是空訊息則
+                    if(tmp!=null)
+                        // 顯示新的訊息
+                        mHandler.post(updateText);
+                }
+
+            } catch (IOException e) {
+
+            }
+        }
+    };
+
 }
