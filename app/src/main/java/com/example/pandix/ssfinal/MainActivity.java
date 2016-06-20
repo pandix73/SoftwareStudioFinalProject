@@ -1,56 +1,68 @@
 package com.example.pandix.ssfinal;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+
 public class MainActivity extends Activity {
 
-    private ImageView bg;
-    private ImageView seat;
-    private Button detail;
+    private ViewPager mViewPager;
+    private MyViewPagerAdapter mAdapter;
+    private ArrayList<View> viewList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        bg = (ImageView)findViewById(R.id.img1);
-        seat = (ImageView)findViewById(R.id.img2);
-        detail = (Button)findViewById(R.id.btn);
-        detail.setOnClickListener(btnOnclick);
-        detail.getBackground().setColorFilter(0xffff0000, PorterDuff.Mode.MULTIPLY);
+        setContentView(R.layout.activity_start);
+
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+
+        final LayoutInflater mInflater = getLayoutInflater().from(this);
+
+        View v1 = mInflater.inflate(R.layout.activity_start1, null);
+        View v2 = mInflater.inflate(R.layout.activity_start2, null);
+        View v3 = mInflater.inflate(R.layout.activity_start3, null);
+
+        viewList = new ArrayList<View>();
+        viewList.add(v1);
+        viewList.add(v2);
+        viewList.add(v3);
+
+        mViewPager.setAdapter(new MyViewPagerAdapter(viewList));
+        mViewPager.setCurrentItem(0);
+        Button button = (Button)findViewById(R.id.btn);
+        button.setOnClickListener(new Button.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                Intent intent = new Intent();
+                if(mViewPager.getCurrentItem() == 0)
+                    intent.setClass(MainActivity.this, BookActivity.class);
+                else if(mViewPager.getCurrentItem() == 1)
+                    intent.setClass(MainActivity.this, ChatActivity.class);
+                else if(mViewPager.getCurrentItem() == 2)
+                    intent.setClass(MainActivity.this, SeatActivity.class);
+                startActivity(intent);
+            }
+        });
+        
     }
 
-    private Button.OnClickListener btnOnclick = new Button.OnClickListener() {
-        public void onClick(View v){
-            openDialog();
-        }
-    };
 
-    private void openDialog() {
-        String output = "";
-        output += "溫度" + 23 + '\n';
-        output += "濕度" + 15 + '\n';
-        output += "剩餘座位" + 5 + '\n';
-
-        new AlertDialog.Builder(this)
-            .setTitle("詳細資料")
-            .setMessage(output)
-            .setPositiveButton("OK",
-                    new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // TODO Auto-generated method stub
-                            //按下按鈕後執行的動作，沒寫則退出Dialog
-                        }
-                    }
-            )
-            .show();
-    }
 }
