@@ -12,8 +12,7 @@
         android:layout_height="wrap_content"
         android:text="館內狀況"
         android:textSize="30dp"
-        android:background="#FF0000"
-        android:
+        android:background="@drawable/shape"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />
 
