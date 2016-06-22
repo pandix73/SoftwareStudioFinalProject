@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.pandix.ssfinal"
-        minSdkVersion 22
+        minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -23,4 +23,8 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.mediatek.mcs:mcs-android:0.1.0'
+    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
+    compile files('libs/jsoup-1.9.2.jar')
+
 }
