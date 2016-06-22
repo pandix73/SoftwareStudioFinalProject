@@ -94,13 +94,13 @@ public class BookActivity extends Activity {
         listv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView parent, View view, int position, long id){
-                String output = result_list.get(position).getBook_name() + '\n' +
-                                result_list.get(position).getAuthor() + '\n' +
-                                result_list.get(position).getCatorgary() + '\n' +
-                                result_list.get(position).getSite() + '\n' +
-                                result_list.get(position).getIndex() + '\n';
+                String output = "書名:" + result_list.get(position).getBook_name() + '\n' +
+                                "作者/出版者:" + result_list.get(position).getAuthor() + '\n' +
+                                "資料類型:" + result_list.get(position).getCatorgary() + '\n' +
+                                "館藏地:" + result_list.get(position).getSite() + '\n' +
+                                "索引:" + result_list.get(position).getIndex() + '\n';
                 show.setText(output);
-                show.setTextSize(80);
+                show.setTextSize(50);
             } //end onItemClick
         }); //end setOnItemClickListener
 
