@@ -74,7 +74,7 @@ public class MainActivity extends Activity {
                 if(position == 0){
                     button.setText("書籍查詢");
                 } else if (position == 1) {
-                    button.setText("管理聊天");
+                    button.setText("線上回報");
                 } else if (position == 2) {
                     button.setText("館內狀況");
                 }

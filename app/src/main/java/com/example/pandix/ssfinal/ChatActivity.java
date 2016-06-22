@@ -21,7 +21,6 @@ import java.net.Socket;
 public class ChatActivity extends Activity {
     public static Handler mHandler = new Handler();
     TextView TextView01;    // 用來顯示文字訊息
-    EditText EditText01;    // 文字方塊
     EditText EditText02;    // 文字方塊
     String tmp;                // 暫存文字訊息
     Socket clientSocket;    // 客戶端socket
@@ -32,7 +31,6 @@ public class ChatActivity extends Activity {
 
         // 從資源檔裡取得位址後強制轉型成文字方塊
         TextView01 = (TextView) findViewById(R.id.TextView01);
-        EditText01=(EditText) findViewById(R.id.EditText01);
         EditText02=(EditText) findViewById(R.id.EditText02);
 
         // 以新的執行緒來讀取資料
@@ -58,7 +56,7 @@ public class ChatActivity extends Activity {
                         bw = new BufferedWriter( new OutputStreamWriter(clientSocket.getOutputStream()));
 
                         // 寫入訊息
-                        bw.write(EditText01.getText()+":"+EditText02.getText()+"\n");
+                        bw.write("customer:"+EditText02.getText()+"\n");
 
                         // 立即發送
                         bw.flush();
