@@ -5,10 +5,13 @@ package com.example.pandix.ssfinal;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -55,6 +58,7 @@ public class BookActivity extends Activity {
     private int index_num = 0;
     private int site_num = 0;
 
+    private int searching = 0;
 
     String url = "http://webpac.lib.nthu.edu.tw/F?func=find-b&local_base=TOP01&find_code=WRD&request=%20";
     String title;
@@ -73,8 +77,6 @@ public class BookActivity extends Activity {
         bt = (Button) findViewById(R.id.button);
         book_name = (EditText) findViewById(R.id.editText);
         listv = (ListView)findViewById(R.id.listView);
-        show = (TextView)findViewById(R.id.show);
-        show.setMovementMethod(ScrollingMovementMethod.getInstance());
 
         bt.setOnClickListener(
                 new Button.OnClickListener(){
@@ -83,10 +85,20 @@ public class BookActivity extends Activity {
                         Toast.makeText(getApplication(), book_name.getText().toString(), Toast.LENGTH_LONG).show();
                         url = "http://webpac.lib.nthu.edu.tw/F?func=find-b&local_base=TOP01&find_code=WRD&request=%20";
                         url = url + book_name.getText().toString();
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(book_name.getWindowToken(), 0);
+
                         Toast.makeText(getApplication(), url, Toast.LENGTH_LONG).show();
-                        new Thread(runnable).start();
+                        //new Thread(runnable).start();
+                        Thread search = new Thread(runnable);
+                        search.start();
+                        searching = 1;
+                        while(searching == 1){}
+                        search.interrupt();
+
                         adapter = new MyAdapter(BookActivity.this, result_list);
                         listv.setAdapter(adapter);
+                        listv.invalidate();
                     }
                 }
         );
@@ -94,19 +106,36 @@ public class BookActivity extends Activity {
         listv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView parent, View view, int position, long id){
-                String output = "書名:" + result_list.get(position).getBook_name() + '\n' +
-                                "作者/出版者:" + result_list.get(position).getAuthor() + '\n' +
-                                "資料類型:" + result_list.get(position).getCatorgary() + '\n' +
-                                "館藏地:" + result_list.get(position).getSite() + '\n' +
-                                "索引:" + result_list.get(position).getIndex() + '\n';
-                show.setText(output);
-                show.setTextSize(50);
+                openDialog(position);
             } //end onItemClick
         }); //end setOnItemClickListener
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    private void openDialog(int position) {
+        String output = "書名:" + result_list.get(position).getBook_name() + '\n' +
+                        "作者/出版者:" + result_list.get(position).getAuthor() + '\n' +
+                        "資料類型:" + result_list.get(position).getCatorgary() + '\n' +
+                        "館藏地:" + result_list.get(position).getSite() + '\n' +
+                        "索引:" + result_list.get(position).getIndex() + '\n';
+
+        new AlertDialog.Builder(this)
+                .setTitle("詳細資料")
+                .setMessage(output)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // TODO Auto-generated method stub
+                                //按下按鈕後執行的動作，沒寫則退出Dialog
+                            }
+                        }
+                )
+                .show();
     }
 
     Runnable runnable = new Runnable(){
@@ -142,10 +171,12 @@ public class BookActivity extends Activity {
                 updateResult();
                 print_result();
 
+
             }catch(IOException e){
                 e.printStackTrace();
             }
-            // handler.sendEmptyMessage(0);
+            searching = 0;
+            //handler.sendEmptyMessage(0);
         }
     };
 
