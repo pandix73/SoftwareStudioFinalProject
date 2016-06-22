@@ -52,19 +52,19 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 // TODO Auto-generated method stub
                 Intent intent = new Intent();
-                if(mViewPager.getCurrentI;
+                if(mViewPager.getCurrentItem() == 0)
+                    intent.setClass(MainActivity.this, BookActivity.class);
+                else if(mViewPager.getCurrentItem() == 1)
+                    intent.setClass(MainActivity.this, ChatActivity.class);
+                else if(mViewPager.getCurrentItem() == 2)
+                    intent.setClass(MainActivity.this, SeatActivity.class);
+                startActivity(intent);
             }
         });
 
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScroltem() == 0)
-                    intent.setClass(MainActivity.this, BookActivity.class);
-            else if(mViewPager.getCurrentItem() == 1)
-                    intent.setClass(MainActivity.this, ChatActivity.class);
-            else if(mViewPager.getCurrentItem() == 2)
-                    intent.setClass(MainActivity.this, SeatActivity.class);
-            startActivity(intent)led(int position, float positionOffset, int positionOffsetPixels) {
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
             }
 
