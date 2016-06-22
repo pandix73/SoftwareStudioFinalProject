@@ -7,11 +7,14 @@ package com.example.pandix.ssfinal;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
@@ -34,19 +37,20 @@ public class BookActivity extends Activity {
     private ImageView bg;
     private Button bt;
     private EditText book_name;
+    private TextView show;
 
     private ListView listv;
     List<Result> result_list = new ArrayList<Result>();
     private MyAdapter adapter;
 
     private ArrayList<String> books = new ArrayList<String>(50);
-    private ArrayList<String> catorgory = new ArrayList<String>(50);
+    private ArrayList<String> category = new ArrayList<String>(50);
     private ArrayList<String> author = new ArrayList<String>(50);
     private ArrayList<String> index = new ArrayList<String>(50);
     private ArrayList<String> site = new ArrayList<String>(50);
 
     private int books_num = 0;
-    private int catorgory_num = 0;
+    private int category_num = 0;
     private int author_num = 0;
     private int index_num = 0;
     private int site_num = 0;
@@ -69,19 +73,37 @@ public class BookActivity extends Activity {
         bt = (Button) findViewById(R.id.button);
         book_name = (EditText) findViewById(R.id.editText);
         listv = (ListView)findViewById(R.id.listView);
-
-
+        show = (TextView)findViewById(R.id.show);
+        show.setMovementMethod(ScrollingMovementMethod.getInstance());
 
         bt.setOnClickListener(
                 new Button.OnClickListener(){
                     public void onClick(View view){
+                        result_list.clear();
                         Toast.makeText(getApplication(), book_name.getText().toString(), Toast.LENGTH_LONG).show();
+                        url = "http://webpac.lib.nthu.edu.tw/F?func=find-b&local_base=TOP01&find_code=WRD&request=%20";
                         url = url + book_name.getText().toString();
                         Toast.makeText(getApplication(), url, Toast.LENGTH_LONG).show();
                         new Thread(runnable).start();
+                        adapter = new MyAdapter(BookActivity.this, result_list);
+                        listv.setAdapter(adapter);
                     }
                 }
         );
+
+        listv.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView parent, View view, int position, long id){
+                String output = result_list.get(position).getBook_name() + '\n' +
+                                result_list.get(position).getAuthor() + '\n' +
+                                result_list.get(position).getCatorgary() + '\n' +
+                                result_list.get(position).getSite() + '\n' +
+                                result_list.get(position).getIndex() + '\n';
+                show.setText(output);
+                show.setTextSize(80);
+            } //end onItemClick
+        }); //end setOnItemClickListener
+
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -111,15 +133,13 @@ public class BookActivity extends Activity {
 
                 Pattern cator = Pattern.compile("var format = \'.*\'?;");
                 Matcher cator_m = cator.matcher(name.html());
-                updateCatorgary(cator_m);
+                updateCategory(cator_m);
 
                 Pattern authorAndIndex = Pattern.compile("<td width=\"15%\" valign=\"top\">.*?</td>");
                 Matcher authorAndIndex_m = authorAndIndex.matcher(n.html());
                 updateAuthorAndIndex(authorAndIndex_m);
 
                 updateResult();
-                adapter = new MyAdapter(BookActivity.this, result_list);
-                listv.setAdapter(adapter);
                 print_result();
 
             }catch(IOException e){
@@ -129,11 +149,11 @@ public class BookActivity extends Activity {
         }
     };
 
-    public void updateCatorgary(Matcher m){
+    public void updateCategory(Matcher m){
         String cat;
         String result;
 
-        catorgory_num = 0;
+        category_num = 0;
         while(m.find()){
             cat = m.group().substring(14, 16);
             if(cat.equals("BK")){
@@ -171,7 +191,7 @@ public class BookActivity extends Activity {
             }else{
                 result = "圖書";
             }
-            catorgory.add(catorgory_num++, result);
+            category.add(category_num++, result);
         }
 
     }
@@ -234,16 +254,16 @@ public class BookActivity extends Activity {
     public void print_result(){
         System.out.println("book_num = " + Integer.toString(books_num));
         System.out.println("author_num = " + Integer.toString(author_num));
-        System.out.println("catorgary_num = " + Integer.toString(catorgory_num));
+        System.out.println("category_num = " + Integer.toString(category_num));
         System.out.println("index_num = " + Integer.toString(index_num));
         System.out.println("site_num = " + Integer.toString(site_num));
 
     }
 
     public void updateResult(){
-        if(books_num==author_num && author_num==catorgory_num && catorgory_num==site_num && site_num==index_num && books_num!=0){
+        if(books_num==author_num && author_num==category_num && category_num==site_num && site_num==index_num && books_num!=0){
             for(int i = 0; i < books_num; i++){
-                result_list.add(new Result(books.get(i), author.get(i), catorgory.get(i), site.get(i), index.get(i)));
+                result_list.add(new Result(books.get(i), author.get(i), category.get(i), site.get(i), index.get(i)));
             }
         }else{
 
