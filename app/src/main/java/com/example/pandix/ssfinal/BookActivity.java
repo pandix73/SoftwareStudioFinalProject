@@ -88,7 +88,7 @@ public class BookActivity extends Activity {
                         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(book_name.getWindowToken(), 0);
 
-                        Toast.makeText(getApplication(), url, Toast.LENGTH_LONG).show();
+                        //Toast.makeText(getApplication(), url, Toast.LENGTH_LONG).show();
                         //new Thread(runnable).start();
                         Thread search = new Thread(runnable);
                         search.start();
@@ -96,6 +96,7 @@ public class BookActivity extends Activity {
                         while(searching == 1){}
                         search.interrupt();
 
+                        if(books_num == 0)Toast.makeText(getApplication(), "找不到資料", Toast.LENGTH_LONG).show();
                         adapter = new MyAdapter(BookActivity.this, result_list);
                         listv.setAdapter(adapter);
                         listv.invalidate();

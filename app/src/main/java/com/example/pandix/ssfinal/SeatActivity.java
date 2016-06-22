@@ -47,6 +47,10 @@ public class SeatActivity extends Activity {
     private ImageView seat;
     private Button detail;
 
+    private double temperature = 25.5;
+    private double humid = 30;
+    private int seats = 5;
+
     private Map<String,String> data = new HashMap<String, String>();
 
     String mDeviceId = "DYfaDGZe";
@@ -84,9 +88,9 @@ public class SeatActivity extends Activity {
 
     private void openDialog() {
         String output = "";
-        output += "溫度" + 26.5 + '\n';
-        output += "濕度" + 51.5 + '\n';
-        output += "剩餘座位" + 5 + '\n';
+        output += "溫度" + String.valueOf(temperature) + "°C\n";
+        output += "濕度" + String.valueOf(humid) + "%\n";
+        output += "剩餘座位" + Integer.toString(seats) + "\n";
 
         new AlertDialog.Builder(this)
                 .setTitle("詳細資料")
@@ -204,13 +208,23 @@ public class SeatActivity extends Activity {
         mDataChannel = new McsDataChannel(deviceInfo, hum_channelEntity, socketListener);
         DataPointEntity hum = mDataChannel.getDataPointEntity();
 
+        if(dust != null){
+            seats = Integer.valueOf(dust.getValues().getValue());
+        }
 
+        if( temp != null){
+            temperature = Double.valueOf(temp.getValues().getValue());
+        }
+
+        if(hum != null){
+            humid = Double.valueOf(hum.getValues().getValue());
+        }
 
         //Toast.makeText(getApplication(),Integer.toString(deviceInfo.getDataChannels().size()), Toast.LENGTH_LONG).show();
-       /*Toast.makeText(getApplication(),"I love you", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplication(),"I love you", Toast.LENGTH_LONG).show();
         Toast.makeText(getApplication(),deviceInfo.getDataChannels().get(0).toString(), Toast.LENGTH_LONG).show();
         Toast.makeText(getApplication(),deviceInfo.getDataChannels().get(1).toString(), Toast.LENGTH_LONG).show();
-        Toast.makeText(getApplication(),deviceInfo.getDataChannels().get(2).toString(), Toast.LENGTH_LONG).show();*/
+        Toast.makeText(getApplication(),deviceInfo.getDataChannels().get(2).toString(), Toast.LENGTH_LONG).show();
         //System.out.println(deviceInfo.getDataChannels());
         //System.out.println(temp);
         //System.out.println(hum);
@@ -218,12 +232,6 @@ public class SeatActivity extends Activity {
         //Toast.makeText(getApplication(),temp.getValues().getValue(), Toast.LENGTH_LONG).show();
 
         // Toast.makeText(getApplication(),dust.getValues().getValue(), Toast.LENGTH_LONG).show();
-
-       /* data.put("dust",dust.getValues().getValue().toString());
-        data.put("temp",temp.getValues().getValue().toString());
-        data.put("hum",hum.getValues().getValue().toString());*/
-
-
         return;
 
     }
