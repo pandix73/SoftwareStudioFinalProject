@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.InetAddress;
 import java.util.ArrayList;
  
 public class server {
@@ -18,7 +19,12 @@ public class server {
     // 程式進入點
     public static void main(String[] args) {
         try {
-            serverSocket = new ServerSocket(serverport);
+            InetAddress myHost = InetAddress.getLocalHost();
+			System.out.println(" " + myHost.getHostName());
+			System.out.println(" " + myHost.getHostAddress());
+ 
+			
+			serverSocket = new ServerSocket(serverport);
             System.out.println("Server is start.");
  
             // 當Server運作中時
