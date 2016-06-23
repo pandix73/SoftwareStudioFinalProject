@@ -70,9 +70,9 @@ public class MyAdapter extends BaseAdapter {
 
         Result result = (Result)getItem(position);
         int num = position + 1;
-        String output = num + result.getBook_name();
+        String output = Integer.toString(num) + "." + result.getBook_name();
         holder.bookName.setText(output);
-        holder.bookName.setTextSize(40);
+        holder.bookName.setTextSize(30);
         /*holder.au.setText(result.getAuthor());
         holder.au.setTextSize(40);
         holder.cat.setText(result.getCatorgary());
